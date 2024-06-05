@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <list>
 
+#define E_MAX 20
+
 using namespace std;
 
 /**
@@ -130,7 +132,7 @@ int main()
     cin >> n >> l >> e; cin.ignore();
 
     Graph graph(n);
-    int exit_nodes[e];
+    int exit_nodes[E_MAX];
 
     for (int i = 0; i < l; i++) {
         int n1; // N1 and N2 defines a link between these nodes
