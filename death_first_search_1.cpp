@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-#include <bits/stdc++.h>
+#include <list>
 
 using namespace std;
 
@@ -68,7 +68,7 @@ pair<bool, list<int>> Graph::BFS(int s, int e)
     pred.resize(V, -1);
 
     vector<int> dist;
-    dist.resize(V, INT_MAX);
+    dist.resize(V, sizeof(int));
 
     list<int> path;
     bool found_path = false;
