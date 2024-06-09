@@ -47,7 +47,7 @@ class Graph():
 
 
 	def generate_edges(self):
-		#A method for getting the edges of the graph. 
+		# A method for getting the edges of the graph. 
 		# Edges are represented as tuples of two nodes 
 		
 		edges = []
