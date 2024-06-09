@@ -9,15 +9,16 @@
 
 using namespace std;
 
-typedef tuple<int,int> Pos;
-
 struct vertex {
 	vector<vertex*> adj; // destination vertecies
 	Pos v_pos;
 	vertex(Pos pos) : v_pos(pos) {}
 };
 
+typedef tuple<int,int> Pos;
+typedef deque<Pos> Path;
 typedef map<Pos, vertex *> vmap;
+typedef map<Pos, char> cmap;
 
 class Graph {
 	private:
@@ -25,8 +26,8 @@ class Graph {
 	public:
 		void add_vertex(Pos pos);
 		void add_edge(Pos pos_from, Pos pos_to);
-		deque<Pos> BFS(Pos pos_from, Pos pos_to, int max_dist);
-		deque<Pos> BFS(Pos pos_from, Pos pos_to);
+		Path BFS(Pos pos_from, Pos pos_to, int max_dist);
+		Path BFS(Pos pos_from, Pos pos_to);
 };
 
 void Graph::add_vertex(Pos pos) {
@@ -50,11 +51,11 @@ void Graph::add_edge(Pos pos_from, Pos pos_to) {
 
 }
 
-deque<Pos> Graph::BFS(Pos pos_from, Pos pos_to, int max_dist) {
+Path Graph::BFS(Pos pos_from, Pos pos_to, int max_dist) {
 
-	deque<Pos> path = BFS(pos_from, pos_to);
+	Path path = BFS(pos_from, pos_to);
 	if (path.size() > max_dist) {
-		deque<Pos> path;
+		Path path;
 		path.push_back(tuple(-1,-1));
 		return path;
 	} 
@@ -62,7 +63,7 @@ deque<Pos> Graph::BFS(Pos pos_from, Pos pos_to, int max_dist) {
 
 }
 
-deque<Pos> Graph::BFS(Pos pos_from, Pos pos_to) {
+Path Graph::BFS(Pos pos_from, Pos pos_to) {
 
 	map<Pos, bool> visited;
 	queue<Pos> q;
@@ -88,7 +89,7 @@ deque<Pos> Graph::BFS(Pos pos_from, Pos pos_to) {
 		}
 	}
 
-	deque<Pos> path;
+	Path path;
 	if(!visited[pos_to]) {
 		path.push_back(tuple(-1,-1));
 	}
@@ -106,8 +107,10 @@ deque<Pos> Graph::BFS(Pos pos_from, Pos pos_to) {
 	return path;
 }
 
-int main()
-{
+void test_01() {
+
+	cout << "Test #01" << endl;
+
 	Graph g;
 
 	Pos p1 = tuple(0,0);
@@ -128,12 +131,38 @@ int main()
 	g.add_edge(p4, p5);
 	g.add_edge(p2, p4);
 
-	deque<Pos> path = g.BFS(p1,p5);
+	Path path = g.BFS(p1,p5);
 	while(!path.empty()) {
 
 		Pos pos = path.back();
 		path.pop_back();
-		cout << get<0>(pos) << "," << get<1>(pos) << endl;
+		cout << "\t(" << get<0>(pos) << "," << get<1>(pos) << ")" << endl;
 	}
 
+}
+
+void test_02() {
+
+	cout << "Test #02" << endl;
+	int R = 10, C = 10, A = 20;
+	cmap game_map;
+
+	for(int r=0; r<R; r++)
+		for(int c=0; c<C; c++) {
+			Pos p = tuple(r,c);
+			game_map[p] = '?';
+		}
+
+	bool control_found, control_reached = false;
+	Pos last_pos, control_pos, tp_pos = tuple(-1, -1);
+	Path exploration_path, control_path, return_path;
+	
+	Graph g;
+
+}
+
+int main()
+{
+	test_01();
+	return 0;
 }
