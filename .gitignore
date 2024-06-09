@@ -1,2 +1,6 @@
 .vscode/*.json
 *.exe
+labirinth/utils
+labirinth/labirinth
+labirinth/Graph
+labirinth/Simulator

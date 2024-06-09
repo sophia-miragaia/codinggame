@@ -47,7 +47,7 @@ class Graph():
 
 
 	def generate_edges(self):
-		#A method for getting the edges of the graph. 
+		# A method for getting the edges of the graph. 
 		# Edges are represented as tuples of two nodes 
 		
 		edges = []
@@ -213,8 +213,6 @@ if __name__ == "__main__":
 	R, C, A = [int(i) for i in input().split()]
 	# Map of the game
 	mapGame = [["?" for _ in range(C)] for _ in range(R)]
-	# Has Kirk reached the Control?
-	hasReachControl = False
 	# Kirk's last position
 	last_pos = (None, None)
 	# last_pos = (last_kr, last_kc)
