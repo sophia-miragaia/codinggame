@@ -35,13 +35,19 @@ void Player::update_graph(cmap sight_map) {
 	for (auto it = sight_map.begin(); it != sight_map.end(); it++) {
 		Pos p = (*it).first;
 		char c = (*it).second;
-		if(c == '.') {
-			bool new_vertex = graph.add_Vertex(p);
-			if(new_vertex) {
+		if(c != '#') {
+			bool is_new_vertex = graph.add_Vertex(p);
+			if(is_new_vertex) {
 				graph.update_edges(p);
+				if(c == 'T') tp_pos = p;
+				if(c == 'C') {
+					control_pos = p;
+					control_found = true;
+				}
 			}
 		}
 	}
+	graph.print_graph();
 
 }
 
@@ -55,16 +61,16 @@ Pos Player::get_move_from_input() {
 	switch (key_move)
 	{
 	case 'w':
-		p = tuple(-1,0);
+		p = graph.dir["UP"];
 		break;
 	case 's':
-		p = tuple(1,0);
+		p = graph.dir["DOWN"];
 		break;
 	case 'a':
-		p = tuple(0,-1);
+		p = graph.dir["LEFT"];
 		break;
 	case 'd':
-		p = tuple(0,1);
+		p = graph.dir["RIGHT"];
 		break;
 	default:
 		cerr << "Unkwown input..." << endl;
@@ -157,7 +163,6 @@ void Simulator::init(Player player) {
 	turns_return = 0;
 	status = Running;
 	update_revealed_map();
-
 	render(true);
 
 }
@@ -188,6 +193,7 @@ void Simulator::update_revealed_map() {
 		char c = (*it).second;
 		smap.revealed_map[p] = c;
 	}
+	player.update_graph(updated_map);
 
 }
 

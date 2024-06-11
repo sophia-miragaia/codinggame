@@ -18,6 +18,10 @@ string pos2string(Pos p) {
 };
 
 Graph::Graph() {
+	dir["RIGHT"] = tuple(0,1);
+	dir["LEFT"] = tuple(0,-1);
+	dir["UP"] = tuple(-1,0);
+	dir["DOWN"] = tuple(1,0);
 };
 
 Graph::~Graph() {
@@ -26,17 +30,17 @@ Graph::~Graph() {
 bool Graph::add_Vertex(Pos pos) {
 
 	vmap::iterator itr = graph.find(pos);
-	bool new_vertex = false;
+	bool is_new_vertex = false;
 
 	if (itr == graph.end())
 	{
 		Vertex *v;
 		v = new Vertex(pos);
 		graph[pos] = v;
-		new_vertex = true;
+		is_new_vertex = true;
 	}
 
-	return new_vertex;
+	return is_new_vertex;
 }
 
 void Graph::add_edge(Pos pos_from, Pos pos_to) {
@@ -51,9 +55,25 @@ void Graph::add_edge(Pos pos_from, Pos pos_to) {
 void Graph::update_edges(Pos pos) {
 
 	vmap::iterator itr;
-	Pos dir = tuple(0,1);
-	Pos new_pos = add_position(pos, dir);
-	if(graph.count(new_pos) == 1) add_edge(pos, new_pos);
+	for(auto it = dir.begin(); it != dir.end(); it++) {
+		Pos connect_pos = add_position(pos, (*it).second);
+		if(graph.count(connect_pos) == 1) add_edge(pos, connect_pos);
+	}
+
+}
+
+void Graph::print_graph() {
+
+	for(auto it=graph.begin(); it != graph.end(); it++) {
+		Pos p = (*it).first;
+		cout << pos2string(p) << endl;
+		
+		Vertex* v = (*it).second;
+		for(auto it2 = v->adj.begin(); it2 != v->adj.end(); it2++) {
+			Pos p2 = (*it2)->v_pos;
+			cout << "\t" << pos2string(p2) << endl;
+		}
+	}
 
 }
 

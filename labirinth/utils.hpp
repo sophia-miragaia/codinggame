@@ -26,16 +26,20 @@ string pos2string(Pos p);
 
 typedef map<Pos, Vertex *> vmap;
 typedef map<Pos, char> cmap;
+typedef map<string, Pos> dmap;
 
 class Graph {
 	private:
 		vmap graph;
 	public:
+		dmap dir;
+		
 		Graph();
 		~Graph();
 		bool add_Vertex(Pos pos);
 		void add_edge(Pos pos_from, Pos pos_to);
 		void update_edges(Pos pos);
+		void print_graph();
 		Path BFS(Pos pos_from, Pos pos_to, int max_dist);
 		Path BFS(Pos pos_from, Pos pos_to);
 };
@@ -71,4 +75,4 @@ void read_map(string filename);
 Config load_config(string config_filename);
 void test_read_map01();
 bool pos_OOB(Pos p, cmap game_map);
-cmap sight_map(Pos p);
+cmap sight_map(Pos player_pos, cmap game_map, int range);
