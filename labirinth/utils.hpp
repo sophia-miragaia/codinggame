@@ -33,8 +33,9 @@ class Graph {
 	public:
 		Graph();
 		~Graph();
-		void add_Vertex(Pos pos);
+		bool add_Vertex(Pos pos);
 		void add_edge(Pos pos_from, Pos pos_to);
+		void update_edges(Pos pos);
 		Path BFS(Pos pos_from, Pos pos_to, int max_dist);
 		Path BFS(Pos pos_from, Pos pos_to);
 };
@@ -49,7 +50,7 @@ struct Config {
 	int MAX_TURNS_RETURN;
 };
 
-enum Status{
+enum Status {
 	OOB = -4,
 	Out_of_turns_return = -3,
 	Out_of_turns = -2,
@@ -69,3 +70,5 @@ Map_Features load_map_file(string filename);
 void read_map(string filename);
 Config load_config(string config_filename);
 void test_read_map01();
+bool pos_OOB(Pos p, cmap game_map);
+cmap sight_map(Pos p);

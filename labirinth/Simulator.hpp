@@ -10,8 +10,9 @@ private:
 	Pos player_pos, player_last_pos, control_pos, tp_pos = tuple(-1, -1);
 	Path exploration_path, control_path, return_path;
 	set<Pos> nodes, explored_nodes, unexplored_nodes;
-	Graph g;
+	Graph graph;
 	Pos get_move_from_input();
+	Pos get_move_from_BFS();
 public:
 	Player();
 	Player(int mode);
@@ -19,6 +20,7 @@ public:
 	void set_mode(int mode);
 	int get_mode();
 	Pos get_move();
+	void update_graph(cmap sight_map);
 };
 
 class Simulator
@@ -37,11 +39,11 @@ public:
 	~Simulator();
 	void init(Player player);
 	void run();
-	bool pos_OOB(Pos pos);
-	void update_revealed_map();
 	void render(bool fog);
 	void print_status();
+	void update_revealed_map();
 	Status step(Pos move);
 };
 
 void test_simulator01();
+void test_simulator02();

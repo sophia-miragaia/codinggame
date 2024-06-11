@@ -23,16 +23,20 @@ Graph::Graph() {
 Graph::~Graph() {
 };
 
-void Graph::add_Vertex(Pos pos) {
+bool Graph::add_Vertex(Pos pos) {
 
 	vmap::iterator itr = graph.find(pos);
+	bool new_vertex = false;
 
 	if (itr == graph.end())
-		{
-			Vertex *v;
-			v = new Vertex(pos);
-			graph[pos] = v;
-		}
+	{
+		Vertex *v;
+		v = new Vertex(pos);
+		graph[pos] = v;
+		new_vertex = true;
+	}
+
+	return new_vertex;
 }
 
 void Graph::add_edge(Pos pos_from, Pos pos_to) {
@@ -41,6 +45,15 @@ void Graph::add_edge(Pos pos_from, Pos pos_to) {
 	Vertex *t = (graph.find(pos_to)->second);
 	f->adj.push_back(t);
 	t->adj.push_back(f);
+
+}
+
+void Graph::update_edges(Pos pos) {
+
+	vmap::iterator itr;
+	Pos dir = tuple(0,1);
+	Pos new_pos = add_position(pos, dir);
+	if(graph.count(new_pos) == 1) add_edge(pos, new_pos);
 
 }
 
@@ -211,6 +224,32 @@ Config load_config(string config_filename) {
 	}
 
 	return config;
+}
+
+bool pos_OOB(Pos pos, cmap game_map) {
+
+	cmap::iterator itr = game_map.find(pos);
+	bool x = itr == game_map.end();
+	return x;
+
+}
+
+cmap sight_map(Pos player_pos, cmap game_map, int range) {
+
+	Pos p = player_pos;
+	int px = get<0>(p);
+	int py = get<1>(p);
+	cmap revealed_map;
+
+	for (int x = px - range; x < px + range + 1; x++)
+		for (int y = py - range; y < py + range + 1; y++) {
+			p = tuple(x,y);
+			if (!pos_OOB(p, game_map)) 
+				revealed_map[p] = game_map[p];
+		}
+	
+	return revealed_map;
+	
 }
 
 

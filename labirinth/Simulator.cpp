@@ -24,8 +24,25 @@ Pos Player::get_move() {
 	Pos p_result;
 	if(mode == 0) {
 		p_result = Player::get_move_from_input();
+	} else if(mode == 1) {
+		p_result = Player::get_move_from_BFS();
 	}
 	return p_result;
+}
+
+void Player::update_graph(cmap sight_map) {
+
+	for (auto it = sight_map.begin(); it != sight_map.end(); it++) {
+		Pos p = (*it).first;
+		char c = (*it).second;
+		if(c == '.') {
+			bool new_vertex = graph.add_Vertex(p);
+			if(new_vertex) {
+				graph.update_edges(p);
+			}
+		}
+	}
+
 }
 
 Pos Player::get_move_from_input() {
@@ -49,12 +66,16 @@ Pos Player::get_move_from_input() {
 	case 'd':
 		p = tuple(0,1);
 		break;
-	
 	default:
 		cerr << "Unkwown input..." << endl;
+		p = tuple(-1,-1);
 		break;
 	}
 	return p;
+}
+
+Pos Player::get_move_from_BFS() {
+
 }
 
 Simulator::Simulator()
@@ -69,14 +90,6 @@ Simulator::Simulator(string config_filename)
 
 Simulator::~Simulator()
 {
-}
-
-bool Simulator::pos_OOB(Pos pos) {
-
-	cmap::iterator itr = smap.game_map.find(pos);
-	bool x = itr == smap.game_map.end();
-	return x;
-
 }
 
 void Simulator::render(bool fog) {
@@ -101,6 +114,7 @@ void Simulator::render(bool fog) {
 
 void Simulator::print_status() {
 
+	
 	switch (status)
 	{
 	case OOB:
@@ -131,21 +145,6 @@ void Simulator::print_status() {
 
 }
 
-void Simulator::update_revealed_map() {
-
-	Pos p = player_pos;
-	int px = get<0>(p);
-	int py = get<1>(p);
-
-	for (int x = px - config.SIGHT_RANGE; x < px + config.SIGHT_RANGE + 1; x++)
-		for (int y = py - config.SIGHT_RANGE; y < py + config.SIGHT_RANGE + 1; y++) {
-			p = tuple(x,y);
-			if (!pos_OOB(p)) 
-				smap.revealed_map[p] = smap.game_map[p];
-		}
-	
-}
-
 void Simulator::init(Player player) {
 
 	string filename = config.scenario + ".map";
@@ -167,13 +166,27 @@ void Simulator::run() {
 
 	while(status == 1) {
 		
-		cout << "Turn: " << turns << " | Pos: " << pos2string(player_pos) << endl;
+		if(player.get_mode() == 0) cout << "Turn: " << turns << " | Pos: " << pos2string(player_pos) << endl;
 
-		Pos move = player.get_move();
-		cout << "Moving: " << pos2string(move) << endl;
+		Pos move = tuple(-1,-1);
+		while(move == tuple(-1,-1)) {
+			move = player.get_move();
+		}
+		if(player.get_mode() == 0) cout << "Moving: " << pos2string(move) << endl;
 
 		status = step(move);
-		print_status();
+	}
+	print_status();
+
+}
+
+void Simulator::update_revealed_map() {
+
+	cmap updated_map = sight_map(player_pos, smap.game_map, config.SIGHT_RANGE);
+	for (auto it = updated_map.begin(); it != updated_map.end(); it++) {
+		Pos p = (*it).first;
+		char c = (*it).second;
+		smap.revealed_map[p] = c;
 	}
 
 }
@@ -189,7 +202,7 @@ Status Simulator::step(Pos move) {
 		status = Out_of_turns;
 	else if (control_reached && (turns_return > config.MAX_TURNS_RETURN)) 
 		status = Out_of_turns_return;
-	else if (pos_OOB(player_pos)) 
+	else if (pos_OOB(player_pos, smap.game_map)) 
 		status = OOB;
 	else if (smap.game_map[player_pos] == '#') 
 		status = Crashed;
@@ -197,6 +210,7 @@ Status Simulator::step(Pos move) {
 		control_reached = true;
 	else if (control_reached && (player_pos == smap.tp_pos)) 
 		status = Sucess;
+	
 	update_revealed_map();
 	render(true);
 
@@ -215,4 +229,17 @@ void test_simulator01() {
 	sim.init(player);
 	sim.run();
 	
+}
+
+void test_simulator02() {
+
+	cout << "Test Simulator #02" << endl;
+
+	string config_filename = "scenario01.config";
+	Simulator sim(config_filename);
+	Player player(1);
+	
+	sim.init(player);
+	sim.run();
+
 }
