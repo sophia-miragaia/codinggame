@@ -1,11 +1,9 @@
-#include "Graph.cpp"
-#include "utils.cpp"
+#include "Simulator.cpp"
 
 using namespace std;
 
 int main()
 {
-	test_graph01();
-	test_read_map01();
+	test_simulator01();
 	return 0;
 }
